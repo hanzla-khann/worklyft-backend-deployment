@@ -128,7 +128,8 @@ router.get(
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
 
-      res.redirect("http://localhost:5173/dashboard");
+      const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
+      res.redirect(`${FRONTEND_URL}/dashboard`);
     } catch (error) {
       res.status(500).json({ success: false, message: "Authentication error" });
     }

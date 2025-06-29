@@ -25,6 +25,7 @@ const templateRoutes = require("./routes/template");
 const dashCommentRoutes = require("./routes/dashboard/dashComment");
 const appointmentRoutes = require("./routes/dashboard/appointment");
 const meetingRoute = require("./routes/meeting");
+const webhookRoute = require("./routes/webhook");
 const analyticsRoutes = require("./routes/analytics"); 
 const moodRoutes = require("./routes/moods"); // Add this line
 
@@ -41,10 +42,21 @@ mongoose
     process.exit(1);
   });
 
+  const allowedOrigins = [
+  'http://localhost:5173',
+  'https://worklyft-alpha.vercel.app'
+];
+
 // Middleware
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     allowedHeaders: [
       "Content-Type",
@@ -72,9 +84,10 @@ app.use("/api/email", emailRoutes);
 app.use("/api/templates", verifyTokens, templateRoutes);
 app.use("/api/appointments", verifyTokens, appointmentRoutes);
 app.use("/api/dashcomments", verifyTokens, dashCommentRoutes);
+app.use("/webhook", webhookRoute); 
 app.use("/api/google-calendar", verifyTokens, googleCalendarRoutes);
 app.use("/api/analytics", verifyTokens, analyticsRoutes);
-app.use("/api/moods", verifyTokens, moodRoutes); // Add this line
+app.use("/api/moods", verifyTokens, moodRoutes); 
 
 app.post("/verify-tokens", verifyTokens, (req, res) => {
   return res.status(200).json({

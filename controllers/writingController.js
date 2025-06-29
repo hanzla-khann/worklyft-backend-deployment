@@ -1,6 +1,3 @@
-
-
-
 // this code works for hardcoded author 123
 const Writing = require("../models/Writing/Writing");
 const { v4: uuidv4 } = require("uuid");
@@ -59,7 +56,8 @@ const shareWriting = async (req, res) => {
     if (!writing) return res.status(404).json({ message: "Writing not found" });
 
     writing.shared = true;
-    writing.sharedLink = `http://localhost:5173/shared/${uuidv4()}`;
+    const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
+    writing.sharedLink = `${FRONTEND_URL}/shared/${uuidv4()}`;
 
     await writing.save();
 
@@ -76,3 +74,4 @@ module.exports = {
   deleteWriting,
   shareWriting,
 };
+

@@ -3,6 +3,7 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
 const passport = require("passport"); 
+const http = require("http");
 require("dotenv").config();
 
 const { router: authRoute, verifyTokens } = require("./routes/auth");
@@ -30,6 +31,10 @@ const analyticsRoutes = require("./routes/analytics");
 const moodRoutes = require("./routes/moods"); // Add this line
 
 const app = express();
+const server = http.createServer(app); // Add this
+
+// Initialize socket after server creation
+require("./socket")(server); // Add this
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
@@ -117,6 +122,6 @@ app.get("/get-user", async (req, res) => {
 
 // Start Server
 const PORT = 4000;
-app.listen(PORT, () => {
+server.listen(PORT, () => { // Change from app.listen to server.listen
   console.log(`Server running on http://localhost:${PORT}`);
 });

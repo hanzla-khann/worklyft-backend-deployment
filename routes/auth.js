@@ -343,8 +343,8 @@ router.post("/login", async (req, res) => {
 });
 
 router.get("/logout", async (req, res) => {
-  res.clearCookie("accessToken");
-  res.clearCookie("refreshToken");
+  res.clearCookie("accessToken", {secure: true, sameSite: "None"});
+  res.clearCookie("refreshToken", {secure: true, sameSite: "None"});
   return res.status(200).json({ message: "User Logged out successfully" });
 });
 
